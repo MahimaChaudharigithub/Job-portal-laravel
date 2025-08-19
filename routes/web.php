@@ -43,6 +43,7 @@ Route::get('/appliedjobs',[Jobs::class,'appliedjobs'])->name('appliedjobs');
 
 // routes/web.php
 Route::get('/filter-jobs', [Jobs::class, 'filterjob'])->name('filter.jobs');
+Route::get('/Jobs/viewApplied/{id}', [Jobs::class, 'viewApplied'])->name('viewApplied');
 
   
 

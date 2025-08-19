@@ -191,6 +191,7 @@ class Jobs extends Controller
   
     $jobId = $request->input('job_id');
     $seekerId = session('user_login_id');
+    //$resume=$request->input('resume');
 
     // Check if the user already applied
     $alreadyApplied = DB::table('applyjob') // use your actual table name here
@@ -202,12 +203,33 @@ class Jobs extends Controller
         return back()->with('error', 'You have already applied for this job.');
     }
 
+  
+  
+    if ($request->hasFile('resume')) {
+       
+        $extension = $request->file('resume')->getClientOriginalExtension();
+  
+  
+        if (!in_array($extension, ['pdf'])) {
+            return back()->with('error', 'Only PDF  files are allowed.');
+        }
+     
+        $fileName = 'resume_' . $seekerId . '_' . $request->job_id . '_' . time() . '.' . $extension;
+
+        
+        $resumePath = $request->file('resume')->storeAs('resumes', $fileName, 'public');
+    }
+
+
+   
     // Insert the new application
     DB::table('applyjob')->insert([
         'job_id' => $jobId,
         'seeker_id' => $seekerId,
+         'resume' => $resumePath,
+        'applied_date'=>date('Y-mm-d'),
         'created_at' => now(),
-        'updated_at' => now(),
+      
     ]);
 
     return back()->with('success', 'You have successfully applied for this job.');
@@ -278,7 +300,12 @@ public function filterjob(Request $request)
 
 
 
-   
+   public function viewApplied($id)
+   {
+       //$data['viewApplied']=DB::table('applyjob')->where('id',$id)->get();
+       $data['viewApplied']=DB::table('applyjob')->join('users','applyjob.seeker_id','=','users.id')->where('job_id',$id)->get();
+        return view('viewAppliedPersons',$data);
+   }
 
 
 

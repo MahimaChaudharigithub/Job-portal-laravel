@@ -53,7 +53,12 @@
                <a href="javascript:void(0);" onclick="openModal('{{ $job->id }}')" class="text-sm text-blue-600 hover:underline block mt-2">
                     View Details →
                 </a>
+            @if(session('user_role')=='EMPLOYEE')
+                <a href="/job-portalLaravel/Jobs/viewApplied/{{ $job->id }}"  class="text-sm text-blue-600 hover:underline block mt-2">
+                View Applied</a>
+                @endif
             </div>
+          
         </div>
     </div>
     @endforeach
@@ -197,14 +202,19 @@
             
             
                             <!-- Apply Button (visible only for seekers) -->
+                            
                 <div class="flex justify-center mt-6 @if(session('user_role') != 'SEEKER') hidden @endif">
-                    <form method="POST" action="{{ route('applyjob') }}">
+                    <form method="POST" action="{{ route('applyjob') }}" enctype="multipart/form-data">
                         @csrf
                         
                         <input type="hidden" name="job_id" id="modalJobId">
+                         <div class="mb-4">
+                            <label for="resume" class="block text-sm font-medium text-gray-700">Upload Resume</label>
+                            <input type="file" name="resume" id="resume" class="mt-2 block w-full text-sm text-gray-700 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" required>
+                        </div>
                         <button type="submit"
                             class="bg-green-500 text-white px-8 py-3 rounded-md hover:bg-green-600 transition duration-300 text-sm font-medium">
-                            <i class="fas fa-paper-plane mr-2"></i> Apply Now
+                            <i class="fas fa-paper-plane mr-2" ></i> Apply Now
                         </button>
                     </form>
                 </div>
